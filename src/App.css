@@ -1545,6 +1545,73 @@ body {
 }
 .info-contact-value { font-size: 0.9rem; color: var(--white); }
 
+/* ══════════════════════════════════════════════
+   RECOMMENDATIONS
+══════════════════════════════════════════════ */
+.recommendations {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 5rem 3rem 6rem;
+  border-top: 1px solid var(--border);
+}
+
+.recs-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.recs-overline {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.recs-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.8rem;
+}
+
+.recs-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-weight: 300;
+}
+
+.recs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.recs-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+}
+
+.recs-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
 /* ── FLOATING CART BUTTON */
 .floating-cart-btn {
   position: fixed;

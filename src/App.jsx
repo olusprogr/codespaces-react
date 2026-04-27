@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
+import { trackEvent, getRecommendations, clearHistory } from './recommendations.js';
 
 // ── ALGORITHMIC ART: Seeded noise-field particle generator
 function useAlgorithmicArt(canvasRef, seed = 42) {
@@ -212,6 +213,337 @@ const PRODUCTS = [
     emoji: '🌙',
     accent: '#d8d0f0',
   },
+  // ── 30 additional products
+  {
+    id: 10, category: 'Watches',
+    name: 'Squelette Doré',
+    brand: 'AURIS MAISON',
+    price: 67000,
+    originalPrice: null,
+    description: 'Open-worked skeleton dial in 18k rose gold. Hand-engraved bridges, 72h power reserve.',
+    badge: 'Exclusive',
+    emoji: '🕰️',
+    accent: '#d4a84c',
+  },
+  {
+    id: 11, category: 'Watches',
+    name: 'Diver Noir 500',
+    brand: 'AURIS MAISON',
+    price: 12800,
+    originalPrice: 14500,
+    description: '500m water-resistant, ceramic bezel, Super-LumiNova indices. ISO 6425 certified.',
+    badge: 'Special Price',
+    emoji: '⌚',
+    accent: '#3a5a7c',
+  },
+  {
+    id: 12, category: 'Watches',
+    name: 'Grand Feu Émail',
+    brand: 'AURIS MAISON',
+    price: 54000,
+    originalPrice: null,
+    description: 'Hand-painted grand feu enamel dial depicting the Paris skyline. Unique piece.',
+    badge: 'One of a Kind',
+    emoji: '🕰️',
+    accent: '#c8b8a2',
+  },
+  {
+    id: 13, category: 'Jewelry',
+    name: 'Étoile Sapphire Necklace',
+    brand: 'LUMIÈRE PARIS',
+    price: 22500,
+    originalPrice: null,
+    description: 'Ceylon sapphire 8ct centre stone, pavé diamond surround. 18k white gold chain.',
+    badge: 'New Arrival',
+    emoji: '💙',
+    accent: '#4a6fa5',
+  },
+  {
+    id: 14, category: 'Jewelry',
+    name: 'Panthère Cuff',
+    brand: 'LUMIÈRE PARIS',
+    price: 18900,
+    originalPrice: 21000,
+    description: 'Articulated 18k yellow gold cuff with onyx spots and emerald eyes. Art Deco.',
+    badge: 'Bestseller',
+    emoji: '✨',
+    accent: '#c8a832',
+  },
+  {
+    id: 15, category: 'Jewelry',
+    name: 'Pearl Rivière',
+    brand: 'LUMIÈRE PARIS',
+    price: 9400,
+    originalPrice: null,
+    description: 'Perfectly matched South Sea pearls, 12–14mm diameter. Diamond-set 18k clasp.',
+    badge: null,
+    emoji: '🪬',
+    accent: '#f0ece4',
+  },
+  {
+    id: 16, category: 'Handbags',
+    name: 'Croco Minaudière',
+    brand: 'MAISON VANEL',
+    price: 8200,
+    originalPrice: null,
+    description: 'Genuine niloticus crocodile, gold-plated brass frame. Evening clutch, limited run.',
+    badge: 'Limited Edition',
+    emoji: '👛',
+    accent: '#7a6a40',
+  },
+  {
+    id: 17, category: 'Handbags',
+    name: 'Toile Monogram Tote',
+    brand: 'MAISON VANEL',
+    price: 3100,
+    originalPrice: null,
+    description: 'Signature woven toile canvas, calfskin trim, gold hardware. A Parisian staple.',
+    badge: null,
+    emoji: '🛍️',
+    accent: '#b8a87c',
+  },
+  {
+    id: 18, category: 'Handbags',
+    name: 'Python Kelly',
+    brand: 'MAISON VANEL',
+    price: 14600,
+    originalPrice: null,
+    description: 'Diamond python skin, palladium hardware, hand-stitched turnlock. Made to order.',
+    badge: 'Bespoke',
+    emoji: '👜',
+    accent: '#6b8a6b',
+  },
+  {
+    id: 19, category: 'Perfume',
+    name: 'Iris Gris Absolu',
+    brand: 'NÉRON PARIS',
+    price: 1200,
+    originalPrice: null,
+    description: 'Orris butter from Tuscany, vetiver, grey musk. A powdery architectural fragrance.',
+    badge: 'New Arrival',
+    emoji: '🌸',
+    accent: '#b0a0c8',
+  },
+  {
+    id: 20, category: 'Perfume',
+    name: 'Cuir de Russie',
+    brand: 'NÉRON PARIS',
+    price: 780,
+    originalPrice: null,
+    description: 'Birch tar, leather accord, aldehydes. A cold-weather icon revived for the modern age.',
+    badge: null,
+    emoji: '🍂',
+    accent: '#8b5e3c',
+  },
+  {
+    id: 21, category: 'Perfume',
+    name: 'Ambre Nomade',
+    brand: 'NÉRON PARIS',
+    price: 920,
+    originalPrice: 1050,
+    description: 'Laotian benzoin, labdanum absolute, saffron. A warm desert accord.',
+    badge: 'Special Price',
+    emoji: '✦',
+    accent: '#c8882c',
+  },
+  {
+    id: 22, category: 'Shoes',
+    name: 'Opera Pump',
+    brand: 'CALLISTO BESPOKE',
+    price: 2400,
+    originalPrice: null,
+    description: 'Patent calfskin opera pump, 90mm stiletto heel, hand-lasted on your personal form.',
+    badge: 'Bespoke',
+    emoji: '👠',
+    accent: '#c03050',
+  },
+  {
+    id: 23, category: 'Shoes',
+    name: 'Monk Strap Cognac',
+    brand: 'CALLISTO BESPOKE',
+    price: 2100,
+    originalPrice: null,
+    description: 'Double monk strap in cognac museum calf. Blake-stitched, cedar shoe trees included.',
+    badge: null,
+    emoji: '👟',
+    accent: '#9b6b3c',
+  },
+  {
+    id: 24, category: 'Shoes',
+    name: 'Velvet Loafer',
+    brand: 'CALLISTO BESPOKE',
+    price: 1750,
+    originalPrice: 2000,
+    description: 'Silk velvet upper, leather sole, gold horse-bit. Perfect for black tie evenings.',
+    badge: 'Special Price',
+    emoji: '🥿',
+    accent: '#4a3070',
+  },
+  {
+    id: 25, category: 'Accessories',
+    name: 'Alligator Belt',
+    brand: 'MAISON VANEL',
+    price: 1480,
+    originalPrice: null,
+    description: 'Full-grain alligator leather, 18k gold buckle. Sizes 70–110cm, made to order.',
+    badge: null,
+    emoji: '🪢',
+    accent: '#5a4a2c',
+  },
+  {
+    id: 26, category: 'Accessories',
+    name: 'Cashmere Travel Wrap',
+    brand: 'MAISON VANEL',
+    price: 890,
+    originalPrice: null,
+    description: 'Grade A Mongolian cashmere, 200×90cm. Reversible ivory and midnight blue.',
+    badge: 'Artisan Craft',
+    emoji: '🧥',
+    accent: '#a8b8c8',
+  },
+  {
+    id: 27, category: 'Accessories',
+    name: 'Cufflinks Émail Bleu',
+    brand: 'LUMIÈRE PARIS',
+    price: 2200,
+    originalPrice: null,
+    description: 'Grand feu enamel in cobalt blue, 18k white gold setting, toggleback closure.',
+    badge: null,
+    emoji: '🔵',
+    accent: '#1a4a8a',
+  },
+  {
+    id: 28, category: 'Accessories',
+    name: 'Leather Portfolio',
+    brand: 'MAISON VANEL',
+    price: 1950,
+    originalPrice: null,
+    description: 'Full-grain black calfskin, 24 card slots, document sleeve. Engraving included.',
+    badge: 'New Arrival',
+    emoji: '🗂️',
+    accent: '#2a2a2a',
+  },
+  {
+    id: 29, category: 'Watches',
+    name: 'Régulateur Acier',
+    brand: 'AURIS MAISON',
+    price: 19500,
+    originalPrice: null,
+    description: 'Regulator display with separate seconds, minutes, and hours. Brushed steel case.',
+    badge: null,
+    emoji: '⌚',
+    accent: '#8a9aaa',
+  },
+  {
+    id: 30, category: 'Jewelry',
+    name: 'Bague Chevalière',
+    brand: 'LUMIÈRE PARIS',
+    price: 4800,
+    originalPrice: null,
+    description: 'Signet ring in 18k yellow gold, hand-engraved heraldic motif. Personalised.',
+    badge: null,
+    emoji: '💍',
+    accent: '#c8a832',
+  },
+  {
+    id: 31, category: 'Handbags',
+    name: 'Sac Pochette Soirée',
+    brand: 'MAISON VANEL',
+    price: 2650,
+    originalPrice: null,
+    description: 'Ivory satin with hand-beaded floral motif. Gold chain strap, silk-lined interior.',
+    badge: 'New Arrival',
+    emoji: '👛',
+    accent: '#e8dcc8',
+  },
+  {
+    id: 32, category: 'Perfume',
+    name: 'Vétiver Encens',
+    brand: 'NÉRON PARIS',
+    price: 840,
+    originalPrice: null,
+    description: 'Haitian vetiver, church incense, smoked cedar. A meditative, unisex composition.',
+    badge: null,
+    emoji: '🕯️',
+    accent: '#6a7a5a',
+  },
+  {
+    id: 33, category: 'Shoes',
+    name: 'Chelsea Boot Suède',
+    brand: 'CALLISTO BESPOKE',
+    price: 2250,
+    originalPrice: null,
+    description: 'Midnight suede Chelsea boot, elastic gore, leather insole. Hand-welted in Florence.',
+    badge: 'Bestseller',
+    emoji: '🥾',
+    accent: '#2c2c4a',
+  },
+  {
+    id: 34, category: 'Accessories',
+    name: 'Montre Gousset',
+    brand: 'AURIS MAISON',
+    price: 7400,
+    originalPrice: null,
+    description: 'Pocket watch in sterling silver, hunter case, Roman numerals. A timeless heirloom.',
+    badge: null,
+    emoji: '🕰️',
+    accent: '#c0c0c0',
+  },
+  {
+    id: 35, category: 'Jewelry',
+    name: 'Collier Rivière Diamants',
+    brand: 'LUMIÈRE PARIS',
+    price: 31000,
+    originalPrice: null,
+    description: '47 round brilliant diamonds totalling 8.4ct. 18k white gold rivière, 42cm.',
+    badge: 'Haute Joaillerie',
+    emoji: '💎',
+    accent: '#e8f0f8',
+  },
+  {
+    id: 36, category: 'Handbags',
+    name: 'Besace Cuir Végétal',
+    brand: 'MAISON VANEL',
+    price: 3800,
+    originalPrice: null,
+    description: 'Vegetable-tanned French calf, brass hardware. Ages beautifully with daily use.',
+    badge: null,
+    emoji: '🎒',
+    accent: '#b89060',
+  },
+  {
+    id: 37, category: 'Perfume',
+    name: 'Rose Absolue de Mai',
+    brand: 'NÉRON PARIS',
+    price: 1650,
+    originalPrice: null,
+    description: 'Rosa centifolia absolute from Grasse, 50ml. One of the rarest perfume ingredients.',
+    badge: 'Rare Edition',
+    emoji: '🌹',
+    accent: '#e05870',
+  },
+  {
+    id: 38, category: 'Accessories',
+    name: 'Chapeau Fedora Feutre',
+    brand: 'MAISON VANEL',
+    price: 560,
+    originalPrice: null,
+    description: 'Hand-blocked rabbit felt fedora, grosgrain ribbon, satin lining. Sizes 54–60.',
+    badge: null,
+    emoji: '🎩',
+    accent: '#3a3020',
+  },
+  {
+    id: 39, category: 'Watches',
+    name: 'Chronographe Flyback',
+    brand: 'AURIS MAISON',
+    price: 36500,
+    originalPrice: null,
+    description: 'Flyback chronograph, column wheel, vertical clutch. Salmon dial, 42mm.',
+    badge: null,
+    emoji: '⌚',
+    accent: '#e8a070',
+  },
 ];
 
 const CATEGORIES = ['All', 'Watches', 'Jewelry', 'Handbags', 'Perfume', 'Shoes', 'Accessories'];
@@ -320,9 +652,10 @@ function CartItem({ item, onRemove, onQty }) {
 }
 
 // ── PRODUCT CARD
-function ProductCard({ product, onAdd }) {
+function ProductCard({ product, onAdd, onView }) {
   const [hovering, setHovering] = useState(false);
   const [added, setAdded] = useState(false);
+  const viewedRef = useRef(false);
 
   const handleAdd = () => {
     onAdd(product);
@@ -330,10 +663,18 @@ function ProductCard({ product, onAdd }) {
     setTimeout(() => setAdded(false), 1500);
   };
 
+  const handleMouseEnter = () => {
+    setHovering(true);
+    if (!viewedRef.current) {
+      viewedRef.current = true;
+      onView?.(product);
+    }
+  };
+
   return (
     <div
       className={`product-card ${hovering ? 'hovered' : ''}`}
-      onMouseEnter={() => setHovering(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setHovering(false)}
       style={{ '--accent': product.accent }}
     >
@@ -607,6 +948,21 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // ── Recommendations state
+  const [recommendations, setRecommendations] = useState([]);
+  const [recsLoading, setRecsLoading] = useState(false);
+  const recsTimerRef = useRef(null);
+
+  const refreshRecommendations = useCallback(() => {
+    setRecsLoading(true); // show spinner immediately
+    clearTimeout(recsTimerRef.current);
+    recsTimerRef.current = setTimeout(async () => {
+      const recs = await getRecommendations(PRODUCTS);
+      setRecommendations(recs);
+      setRecsLoading(false);
+    }, 800);
+  }, []);
+
   // ── Cart logic
   const addToCart = useCallback((product) => {
     setCart((prev) => {
@@ -614,8 +970,10 @@ export default function App() {
       if (existing) return prev.map((i) => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
       return [...prev, { ...product, qty: 1 }];
     });
+    trackEvent('cart_add', product);
     setCartOpen(true);
-  }, []);
+    refreshRecommendations();
+  }, [refreshRecommendations]);
 
   const removeFromCart = useCallback((id) => {
     setCart((prev) => prev.filter((i) => i.id !== id));
@@ -643,6 +1001,8 @@ export default function App() {
   });
 
   const handleCheckoutSuccess = () => {
+    clearHistory();
+    setRecommendations([]);
     setTimeout(() => setCart([]), 3500);
   };
 
@@ -835,6 +1195,29 @@ export default function App() {
         </div>
       </div>
 
+      {/* ── RECOMMENDATIONS (above catalog, shown once data exists) */}
+      {(recsLoading || recommendations.length > 0) && (
+        <section className="recommendations">
+          <div className="recs-header">
+            <div className="recs-overline">Powered by Gemini AI</div>
+            <h2 className="recs-title">Curated For You</h2>
+            <p className="recs-subtitle">Based on your browsing — pieces you may desire.</p>
+          </div>
+          {recsLoading ? (
+            <div className="recs-loading">
+              <div className="recs-spinner" />
+              <span>Analysing your taste…</span>
+            </div>
+          ) : (
+            <div className="recs-grid">
+              {recommendations.map((p) => (
+                <ProductCard key={`rec-${p.id}`} product={p} onAdd={addToCart} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
       {/* ── CATALOG */}
       <section id="catalog" className="catalog">
         <div className="catalog-header">
@@ -851,7 +1234,13 @@ export default function App() {
               <button
                 key={cat}
                 className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  if (cat !== 'All') {
+                    trackEvent('filter', { category: cat });
+                    refreshRecommendations();
+                  }
+                }}
               >
                 {cat}
               </button>
@@ -880,7 +1269,7 @@ export default function App() {
         {filtered.length > 0 ? (
           <div className="product-grid">
             {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} onAdd={addToCart} />
+              <ProductCard key={p.id} product={p} onAdd={addToCart} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
             ))}
           </div>
         ) : (
