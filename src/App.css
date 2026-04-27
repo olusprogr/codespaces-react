@@ -233,7 +233,7 @@ body {
 .nav-search-btn {
   background: none;
   border: none;
-  color: var(--text-dim);
+  color: #c8b88a;
   font-size: 1.3rem;
   cursor: pointer;
   transition: color 0.25s;
@@ -244,8 +244,8 @@ body {
 .cart-btn {
   position: relative;
   background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
+  border: 1px solid rgba(200,184,138,0.45);
+  color: #c8b88a;
   padding: 0.5rem 1rem;
   cursor: pointer;
   display: flex;
@@ -319,7 +319,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 300;
-  color: var(--white);
+  color: var(--ink);
   margin-bottom: 1rem;
   letter-spacing: 0.02em;
 }
@@ -410,6 +410,7 @@ body {
   background: linear-gradient(135deg, rgba(184,134,11,0.04) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.4s;
+  pointer-events: none;
 }
 .product-card.hovered {
   border-color: var(--border-bright);
@@ -455,6 +456,7 @@ body {
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.4s;
+  pointer-events: none;
 }
 .product-card.hovered .product-glow { opacity: 1; }
 
@@ -1542,6 +1544,54 @@ body {
   margin-bottom: 0.2rem;
 }
 .info-contact-value { font-size: 0.9rem; color: var(--white); }
+
+/* ── FLOATING CART BUTTON */
+.floating-cart-btn {
+  position: fixed;
+  top: 1rem;
+  right: 1.2rem;
+  z-index: 150;
+  background: rgba(28,26,20,0.96);
+  border: 1px solid rgba(200,184,138,0.45);
+  color: #c8b88a;
+  font-size: 1.2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  transition: border-color 0.25s, color 0.25s, transform 0.2s;
+  animation: floatIn 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.floating-cart-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: scale(1.08);
+}
+@keyframes floatIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.floating-cart-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+}
 
 /* ══════════════════════════════════════════════
    RESPONSIVE
