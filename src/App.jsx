@@ -952,14 +952,23 @@ export default function App() {
   const [recommendations, setRecommendations] = useState([]);
   const [recsLoading, setRecsLoading] = useState(false);
   const recsTimerRef = useRef(null);
+  const recsAbortRef = useRef(null);
 
+  // Fix C + D — AbortController prevents stale responses overwriting fresh ones;
+  // null result means error → keep whatever recommendations are already shown.
   const refreshRecommendations = useCallback(() => {
-    setRecsLoading(true); // show spinner immediately
     clearTimeout(recsTimerRef.current);
     recsTimerRef.current = setTimeout(async () => {
-      const recs = await getRecommendations(PRODUCTS);
-      setRecommendations(recs);
+      recsAbortRef.current?.abort();
+      const ctrl = new AbortController();
+      recsAbortRef.current = ctrl;
+      setRecsLoading(true);
+      const recs = await getRecommendations(PRODUCTS, ctrl.signal);
+      if (ctrl.signal.aborted) return;
       setRecsLoading(false);
+      if (recs === null) return;        // error — keep old results visible
+      if (recs.length === 0) return;    // nothing useful — keep old results
+      setRecommendations(recs);
     }, 800);
   }, []);
 
