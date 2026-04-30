@@ -554,6 +554,112 @@ const fmt = (n) =>
 const scrollTo = (id) =>
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
+// ── PROFILE DRAWER
+function ProfileDrawer({ onClose }) {
+  const [tab, setTab] = useState('login'); // 'login' | 'register'
+  const [form, setForm] = useState({ email: '', password: '', name: '' });
+  const [errors, setErrors] = useState({});
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const validateLogin = () => {
+    const e = {};
+    if (!form.email.includes('@')) e.email = 'Valid email required';
+    if (form.password.length < 6) e.password = 'Min. 6 characters';
+    return e;
+  };
+  const validateRegister = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = 'Required';
+    if (!form.email.includes('@')) e.email = 'Valid email required';
+    if (form.password.length < 6) e.password = 'Min. 6 characters';
+    return e;
+  };
+
+  const handleSubmit = () => {
+    const e = tab === 'login' ? validateLogin() : validateRegister();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setLoggedIn(true);
+  };
+
+  const field = (key, label, type = 'text', placeholder = '') => (
+    <div className="form-group">
+      <label>{label}</label>
+      <input
+        type={type}
+        value={form[key]}
+        onChange={(ev) => setForm({ ...form, [key]: ev.target.value })}
+        placeholder={placeholder}
+      />
+      {errors[key] && <span className="form-error">{errors[key]}</span>}
+    </div>
+  );
+
+  return (
+    <div className="drawer-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="profile-drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="cart-header">
+          <h3>{loggedIn ? 'My Account' : 'Private Access'}</h3>
+          <button className="drawer-close" onClick={onClose}>×</button>
+        </div>
+
+        {loggedIn ? (
+          <div className="profile-body">
+            <div className="profile-logged-in">
+              <div className="profile-avatar-large">✦</div>
+              <div className="profile-email">{form.email}</div>
+              <div className="profile-member-badge">Member · Maison Auris</div>
+            </div>
+            <div className="profile-menu">
+              {['My Orders', 'Bespoke Commissions', 'Wishlist', 'Address Book', 'Preferences'].map((item) => (
+                <button key={item} className="profile-menu-item">{item} <span>→</span></button>
+              ))}
+            </div>
+            <button
+              className="continue-btn"
+              style={{ marginTop: '1rem' }}
+              onClick={() => { setLoggedIn(false); setForm({ email: '', password: '', name: '' }); }}
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <div className="profile-body">
+            <div className="profile-welcome">
+              <div className="profile-avatar-large">◉</div>
+              <p className="profile-tagline">
+                Access your orders, bespoke commissions and private client services.
+              </p>
+            </div>
+            <div className="profile-tabs">
+              <button
+                className={`profile-tab ${tab === 'login' ? 'active' : ''}`}
+                onClick={() => { setTab('login'); setErrors({}); }}
+              >
+                Sign In
+              </button>
+              <button
+                className={`profile-tab ${tab === 'register' ? 'active' : ''}`}
+                onClick={() => { setTab('register'); setErrors({}); }}
+              >
+                Create Account
+              </button>
+            </div>
+            {tab === 'register' && field('name', 'Full Name', 'text', 'Alexandre Beaumont')}
+            {field('email', 'Email', 'email', 'alexandre@maison.fr')}
+            {field('password', 'Password', 'password', '••••••••')}
+            <button className="checkout-btn" style={{ marginTop: '0.5rem' }} onClick={handleSubmit}>
+              {tab === 'login' ? 'Sign In →' : 'Create Account →'}
+            </button>
+            {tab === 'login' && (
+              <button className="profile-forgot">Forgot password?</button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── INFO MODAL (Maisons / Bespoke / Atelier / Contact / etc.)
 function InfoModal({ title, children, onClose }) {
   return (
@@ -938,8 +1044,15 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [heroVisible, setHeroVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => { setTimeout(() => setHeroVisible(true), 100); }, []);
+
+  useEffect(() => {
+    const anyOpen = cartOpen || checkoutOpen || searchOpen || !!infoModal || profileOpen;
+    document.body.style.overflow = anyOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [cartOpen, checkoutOpen, searchOpen, infoModal, profileOpen]);
 
   // ── Recommendations state
   const [recommendations, setRecommendations] = useState([]);
@@ -1133,6 +1246,12 @@ export default function App() {
         <div className="nav-actions">
           <button className="nav-search-btn" aria-label="search" onClick={() => setSearchOpen(true)}>
             ⌕
+          </button>
+          <button className="nav-profile-btn" aria-label="profile" onClick={() => setProfileOpen(true)}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
           </button>
           <button className="cart-btn" onClick={() => setCartOpen(true)}>
             <span className="cart-icon">🛍</span>
@@ -1389,6 +1508,11 @@ export default function App() {
           onClose={() => setCheckoutOpen(false)}
           onSuccess={handleCheckoutSuccess}
         />
+      )}
+
+      {/* ── PROFILE DRAWER */}
+      {profileOpen && (
+        <ProfileDrawer onClose={() => setProfileOpen(false)} />
       )}
 
       {/* ── SEARCH OVERLAY */}
