@@ -938,15 +938,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [heroVisible, setHeroVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => { setTimeout(() => setHeroVisible(true), 100); }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // ── Recommendations state
   const [recommendations, setRecommendations] = useState([]);
@@ -1335,14 +1328,6 @@ export default function App() {
         </div>
         <div className="footer-copy">© 2026 Auris Maison. All rights reserved.</div>
       </footer>
-
-      {/* ── FLOATING CART BUTTON */}
-      {scrolled && !cartOpen && !checkoutOpen && (
-        <button className="floating-cart-btn" onClick={() => setCartOpen(true)}>
-          <span>🛍</span>
-          {cartCount > 0 && <span className="floating-cart-count">{cartCount}</span>}
-        </button>
-      )}
 
       {/* ── CART DRAWER */}
       {cartOpen && (
