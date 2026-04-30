@@ -578,6 +578,58 @@ function CartItem({ item, onRemove, onQty }) {
   );
 }
 
+// ── SORT DROPDOWN
+const SORT_OPTIONS = [
+  { value: 'default',    label: 'Featured' },
+  { value: 'price-asc',  label: 'Price: Low → High' },
+  { value: 'price-desc', label: 'Price: High → Low' },
+  { value: 'alpha-asc',  label: 'Name: A → Z' },
+  { value: 'alpha-desc', label: 'Name: Z → A' },
+];
+
+function SortDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const current = SORT_OPTIONS.find((o) => o.value === value);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div className="sort-dropdown" ref={ref}>
+      <button
+        className={`sort-trigger ${open ? 'open' : ''}`}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className="sort-trigger-label">
+          <span className="sort-trigger-prefix">Sort</span>
+          <span className="sort-trigger-value">{current.label}</span>
+        </span>
+        <svg className="sort-chevron" width="10" height="6" viewBox="0 0 10 6">
+          <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        </svg>
+      </button>
+      {open && (
+        <div className="sort-menu">
+          {SORT_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              className={`sort-option ${opt.value === value ? 'active' : ''}`}
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+            >
+              {opt.value === value && <span className="sort-option-tick">✦</span>}
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── PRODUCT CARD
 function ProductCard({ product, onAdd, onView }) {
   const navigate = useNavigate();
@@ -885,6 +937,7 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
   const [heroVisible, setHeroVisible] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('default');
   const [recommendations, setRecommendations] = useState([]);
   const [recsLoading, setRecsLoading] = useState(false);
   const recsTimerRef = useRef(null);
@@ -918,6 +971,12 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
     const q = searchQuery.toLowerCase();
     const searchMatch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
     return catMatch && searchMatch;
+  }).slice().sort((a, b) => {
+    if (sortOrder === 'alpha-asc') return a.name.localeCompare(b.name);
+    if (sortOrder === 'alpha-desc') return b.name.localeCompare(a.name);
+    if (sortOrder === 'price-asc') return a.price - b.price;
+    if (sortOrder === 'price-desc') return b.price - a.price;
+    return 0;
   });
 
   return (
@@ -1000,6 +1059,7 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
             ))}
           </div>
           <div className="filter-right">
+            <SortDropdown value={sortOrder} onChange={setSortOrder} />
             <input
               className="search-input"
               placeholder="Search pieces…"
