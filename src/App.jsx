@@ -124,7 +124,19 @@ const PRODUCTS = [
     badge: 'Limited Edition',
     emoji: '⌚',
     accent: '#c9a84c',
+    details: {
+      movement: 'Manual-winding tourbillon, 72h power reserve',
+      case: 'Grade 5 titanium, 42mm, 50m water resistance',
+      dial: 'Obsidian black with 18k gold indices',
+      crystal: 'Domed sapphire, anti-reflective coating',
+      strap: 'Alligator leather with titanium deployant clasp',
+      origin: 'Swiss Made · Le Brassus, Switzerland',
+      reference: 'AM-XII-T001',
+    },
   },
+];
+
+const PLACEHOLDER_REMOVED = [
   {
     id: 2, category: 'Jewelry',
     name: 'Celestia Diamond Ring',
@@ -546,7 +558,7 @@ const PRODUCTS = [
   },
 ];
 
-const CATEGORIES = ['All', 'Watches', 'Jewelry', 'Handbags', 'Perfume', 'Shoes', 'Accessories'];
+const CATEGORIES = ['All', 'Watches'];
 
 const fmt = (n) =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
@@ -651,8 +663,69 @@ function CartItem({ item, onRemove, onQty }) {
   );
 }
 
+// ── PRODUCT DETAIL PAGE
+function ProductDetail({ product, onAdd, onBack }) {
+  const [added, setAdded] = useState(false);
+  const handleAdd = () => {
+    onAdd(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
+  return (
+    <div className="detail-page">
+      <div className="detail-breadcrumb">
+        <button className="detail-back" onClick={onBack}>← Collection</button>
+        <span className="detail-bc-sep">/</span>
+        <span>{product.category}</span>
+        <span className="detail-bc-sep">/</span>
+        <span>{product.name}</span>
+      </div>
+      <div className="detail-body">
+        <div className="detail-visual">
+          <div className="detail-emoji-wrap" style={{ '--accent': product.accent }}>
+            <div className="detail-glow" style={{ background: `radial-gradient(circle, ${product.accent}40, transparent 65%)` }} />
+            <div className="detail-emoji">{product.emoji}</div>
+          </div>
+          {product.badge && <div className="detail-badge">{product.badge}</div>}
+        </div>
+        <div className="detail-info">
+          <div className="detail-overline">{product.category}</div>
+          <div className="detail-brand">{product.brand}</div>
+          <h1 className="detail-name">{product.name}</h1>
+          <div className="detail-pricing">
+            <span className="detail-price">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(product.price)}</span>
+            {product.originalPrice && (
+              <span className="detail-original">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(product.originalPrice)}</span>
+            )}
+          </div>
+          <p className="detail-desc">{product.description}</p>
+          <button className={`detail-add-btn ${added ? 'added' : ''}`} onClick={handleAdd}>
+            {added ? '✓ Added to Cart' : 'Add to Cart'}
+          </button>
+          <div className="detail-perks">
+            <div className="detail-perk">🚁 White Glove Delivery</div>
+            <div className="detail-perk">🔐 Certificate of Authenticity</div>
+            <div className="detail-perk">🔄 30-Day Returns</div>
+          </div>
+          {product.details && (
+            <div className="detail-specs">
+              <div className="detail-specs-title">Specifications</div>
+              {Object.entries(product.details).map(([k, v]) => (
+                <div key={k} className="detail-spec-row">
+                  <span className="detail-spec-key">{k.charAt(0).toUpperCase() + k.slice(1)}</span>
+                  <span className="detail-spec-val">{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── PRODUCT CARD
-function ProductCard({ product, onAdd, onView }) {
+function ProductCard({ product, onAdd, onView, onSelect }) {
   const [hovering, setHovering] = useState(false);
   const [added, setAdded] = useState(false);
   const viewedRef = useRef(false);
@@ -679,22 +752,24 @@ function ProductCard({ product, onAdd, onView }) {
       style={{ '--accent': product.accent }}
     >
       {product.badge && <div className="product-badge">{product.badge}</div>}
-      <div className="product-emoji-wrap">
-        <div className="product-emoji">{product.emoji}</div>
-        <div
-          className="product-glow"
-          style={{ background: `radial-gradient(circle, ${product.accent}30, transparent 70%)` }}
-        />
-      </div>
-      <div className="product-category">{product.category}</div>
-      <div className="product-brand">{product.brand}</div>
-      <div className="product-name">{product.name}</div>
-      <div className="product-desc">{product.description}</div>
-      <div className="product-pricing">
-        <span className="product-price">{fmt(product.price)}</span>
-        {product.originalPrice && (
-          <span className="product-original">{fmt(product.originalPrice)}</span>
-        )}
+      <div className="product-card-clickable" onClick={() => onSelect?.(product)}>
+        <div className="product-emoji-wrap">
+          <div className="product-emoji">{product.emoji}</div>
+          <div
+            className="product-glow"
+            style={{ background: `radial-gradient(circle, ${product.accent}30, transparent 70%)` }}
+          />
+        </div>
+        <div className="product-category">{product.category}</div>
+        <div className="product-brand">{product.brand}</div>
+        <div className="product-name">{product.name}</div>
+        <div className="product-desc">{product.description}</div>
+        <div className="product-pricing">
+          <span className="product-price">{fmt(product.price)}</span>
+          {product.originalPrice && (
+            <span className="product-original">{fmt(product.originalPrice)}</span>
+          )}
+        </div>
       </div>
       <button className={`add-to-cart ${added ? 'added' : ''}`} onClick={handleAdd}>
         {added ? '✓ In der Auswahl' : 'Add to Cart'}
@@ -938,6 +1013,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [heroVisible, setHeroVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => { setTimeout(() => setHeroVisible(true), 100); }, []);
 
@@ -1157,8 +1233,17 @@ export default function App() {
         </div>
       )}
 
-      {/* ── HERO */}
-      <div className="hero">
+      {/* ── PRODUCT DETAIL PAGE */}
+      {selectedProduct && (
+        <ProductDetail
+          product={selectedProduct}
+          onAdd={addToCart}
+          onBack={() => setSelectedProduct(null)}
+        />
+      )}
+
+      {/* ── MAIN CONTENT (hidden when detail page is open) */}
+      {!selectedProduct && <div className="hero">
         <canvas ref={canvasRef} className="hero-canvas" />
         <div className={`hero-content ${heroVisible ? 'visible' : ''}`}>
           <div className="hero-overline">MAISON AURIS · EST. MMXIX</div>
@@ -1183,8 +1268,9 @@ export default function App() {
           <div className="scroll-line" />
           <span>Scroll</span>
         </div>
-      </div>
+      </div>}
 
+      {!selectedProduct && <>
       {/* ── MARQUEE */}
       <div className="marquee-wrap">
         <div className="marquee">
@@ -1213,7 +1299,7 @@ export default function App() {
           ) : (
             <div className="recs-grid">
               {recommendations.map((p) => (
-                <ProductCard key={`rec-${p.id}`} product={p} onAdd={addToCart} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
+                <ProductCard key={`rec-${p.id}`} product={p} onAdd={addToCart} onSelect={setSelectedProduct} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
               ))}
             </div>
           )}
@@ -1271,7 +1357,7 @@ export default function App() {
         {filtered.length > 0 ? (
           <div className="product-grid">
             {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} onAdd={addToCart} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
+              <ProductCard key={p.id} product={p} onAdd={addToCart} onSelect={setSelectedProduct} onView={(prod) => { trackEvent('view', prod); refreshRecommendations(); }} />
             ))}
           </div>
         ) : (
@@ -1284,6 +1370,7 @@ export default function App() {
           </div>
         )}
       </section>
+      </>}
 
       {/* ── FEATURES STRIP */}
       <section className="features">
