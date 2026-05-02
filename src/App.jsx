@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import { trackEvent, getRecommendations, clearHistory } from './recommendations.js';
 
@@ -40,10 +40,10 @@ function useAlgorithmicArt(canvasRef, seed = 42) {
       const w = W(), h = H();
       ctx.clearRect(0, 0, w, h);
       const bg = ctx.createLinearGradient(0, 0, w, h);
-      bg.addColorStop(0, '#1c1a14'); bg.addColorStop(0.4, '#22201a'); bg.addColorStop(1, '#181610');
+      bg.addColorStop(0, '#1b1e29'); bg.addColorStop(0.4, '#14161f'); bg.addColorStop(1, '#0e1018');
       ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
       const glow = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, w * 0.55);
-      glow.addColorStop(0, 'rgba(184,134,11,0.12)'); glow.addColorStop(0.5, 'rgba(140,100,0,0.06)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
+      glow.addColorStop(0, 'rgba(201,164,73,0.16)'); glow.addColorStop(0.5, 'rgba(160,127,42,0.07)'); glow.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
       ctx.save(); ctx.globalAlpha = 0.04; ctx.strokeStyle = '#c9a84c'; ctx.lineWidth = 0.5;
       for (let i = -h; i < w + h; i += 60) {
@@ -87,273 +87,273 @@ const PRODUCTS = [
     id: 1, category: 'Watches', name: 'Chrono Obsidian XII', brand: 'AURIS MAISON',
     price: 28500, originalPrice: 32000,
     description: 'Tourbillon movement with obsidian dial. Swiss-made, titanium case, sapphire crystal.',
-    badge: 'Limited Edition', emoji: '⌚', accent: '#c9a84c',
+    badge: 'Limited Edition', image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=600&q=80&fit=crop&auto=format', accent: '#c9a84c',
     details: { movement: 'Manual-winding tourbillon, 72h power reserve', case: 'Grade 5 titanium, 42mm, 50m WR', dial: 'Obsidian black with 18k gold indices', crystal: 'Domed sapphire, AR coating both sides', strap: 'Alligator leather, titanium deployant clasp', origin: 'Swiss Made · Le Brassus', reference: 'AM-XII-T001' },
   },
   {
     id: 2, category: 'Jewelry', name: 'Celestia Diamond Ring', brand: 'LUMIÈRE PARIS',
     price: 14200, originalPrice: null,
     description: '3.2ct VVS1 diamond, platinum band. GIA certified. Handcrafted in Paris.',
-    badge: 'Bestseller', emoji: '💎', accent: '#b8d4e8',
+    badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80&fit=crop&auto=format', accent: '#b8d4e8',
     details: { metal: 'Platinum 950', stone: '3.2ct round brilliant, VVS1 D-colour', setting: 'Six-claw solitaire', band: '2.2mm tapered, polished finish', certification: 'GIA #2417830291', weight: '5.4g total', origin: 'Paris, France', reference: 'LP-CDR-001' },
   },
   {
     id: 3, category: 'Handbags', name: 'Noir Structuré Bag', brand: 'MAISON VANEL',
     price: 4750, originalPrice: null,
     description: 'Full-grain calf leather, 18k gold hardware. Hand-stitched by Parisian artisans.',
-    badge: 'New Arrival', emoji: '👜', accent: '#a0856c',
+    badge: 'New Arrival', image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80&fit=crop&auto=format', accent: '#a0856c',
     details: { material: 'Full-grain French calf leather', hardware: '18k gold-plated brass', lining: 'Grosgrain silk, suede-lined pockets', dimensions: '30 × 22 × 12 cm', strap: 'Detachable leather shoulder strap', closure: 'Magnetic turnlock', origin: 'Paris, France', reference: 'MV-NSB-030' },
   },
   {
     id: 4, category: 'Perfume', name: 'Oud Imperiale', brand: 'NÉRON PARIS',
     price: 890, originalPrice: null,
     description: 'Aged Cambodian oud, Bulgarian rose, ambergris. 100ml flacon de parfum.',
-    badge: null, emoji: '🌹', accent: '#9b6b9b',
+    badge: null, image: 'https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&q=80&fit=crop&auto=format', accent: '#9b6b9b',
     details: { concentration: 'Parfum (30% aromatic compounds)', topNotes: 'Pink pepper, bergamot', heartNotes: 'Aged Cambodian oud, Bulgarian rose', baseNotes: 'Grey ambergris, sandalwood, musk', volume: '100ml', longevity: '12–18 hours', projection: 'Moderate–heavy', origin: 'Grasse, France', reference: 'NP-OI-100' },
   },
   {
     id: 5, category: 'Watches', name: 'Perpetuel Blanc', brand: 'AURIS MAISON',
     price: 41000, originalPrice: null,
     description: 'Perpetual calendar, moonphase complication. 18k white gold, crocodile strap.',
-    badge: 'Haute Horlogerie', emoji: '🕰️', accent: '#e8e0d0',
+    badge: 'Haute Horlogerie', image: 'https://images.unsplash.com/photo-1509941943102-10c232535736?w=600&q=80&fit=crop&auto=format', accent: '#e8e0d0',
     details: { movement: 'Cal. AM-500PC, perpetual calendar, moonphase', case: '18k white gold, 41mm, 30m WR', dial: 'Silver guilloché with blued moonphase disc', crystal: 'Flat sapphire, single AR coating', strap: 'Porosus crocodile, 18k white gold buckle', powerReserve: '56 hours', origin: 'Swiss Made · Geneva', reference: 'AM-PB-4100' },
   },
   {
     id: 6, category: 'Jewelry', name: 'Serpentine Bracelet', brand: 'LUMIÈRE PARIS',
     price: 6800, originalPrice: 7500,
     description: 'Articulated 18k yellow gold with pavé emeralds. Inspired by Art Deco movement.',
-    badge: 'Special Price', emoji: '✨', accent: '#4caf7a',
+    badge: 'Special Price', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80&fit=crop&auto=format', accent: '#4caf7a',
     details: { metal: '18k yellow gold', stones: 'Colombian emeralds 1.8ct total, F1 quality', setting: 'Pavé, hand-set', length: '18cm, adjustable to 20cm', clasp: 'Hidden box clasp with safety', weight: '28g', origin: 'Paris, France', reference: 'LP-SB-068' },
   },
   {
     id: 7, category: 'Shoes', name: 'Velours Noir Derby', brand: 'CALLISTO BESPOKE',
     price: 1950, originalPrice: null,
     description: 'Bespoke calfskin derby with hand-painted patina. Goodyear-welted construction.',
-    badge: null, emoji: '👞', accent: '#8b6347',
+    badge: null, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80&fit=crop&auto=format', accent: '#8b6347',
     details: { material: 'Box calf leather, hand-painted patina', sole: 'Double leather sole, hand-stitched welt', construction: 'Goodyear-welted', last: 'Classic Oxford, medium width', lining: 'Full leather lining', heel: '28mm', origin: 'Florence, Italy', reference: 'CB-VND-001' },
   },
   {
     id: 8, category: 'Accessories', name: 'Plissé Silk Scarf', brand: 'MAISON VANEL',
     price: 680, originalPrice: null,
     description: 'Hand-rolled edges, 140×140cm pure silk. Printed in Lyon, finished in Paris.',
-    badge: 'Artisan Craft', emoji: '🧣', accent: '#d4a0c8',
+    badge: 'Artisan Craft', image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80&fit=crop&auto=format', accent: '#d4a0c8',
     details: { material: 'Pure silk twill, 65g/m²', dimensions: '140 × 140 cm', print: 'Screen-printed in Lyon, 32 colours', edges: 'Hand-rolled and hand-stitched', finish: 'Steam-pressed, plissé fold', care: 'Dry clean only', origin: 'Lyon & Paris, France', reference: 'MV-PSS-140' },
   },
   {
     id: 9, category: 'Perfume', name: 'Blanc de Lune', brand: 'NÉRON PARIS',
     price: 650, originalPrice: null,
     description: 'White musk, iris root, Tahitian vanilla. An ethereal nocturnal fragrance.',
-    badge: null, emoji: '🌙', accent: '#d8d0f0',
+    badge: null, image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600&q=80&fit=crop&auto=format', accent: '#d8d0f0',
     details: { concentration: 'Eau de Parfum (22% aromatic compounds)', topNotes: 'Aldehydes, neroli', heartNotes: 'Iris root absolute, violet', baseNotes: 'White musk, Tahitian vanilla, cedarwood', volume: '75ml', longevity: '8–12 hours', origin: 'Grasse, France', reference: 'NP-BDL-075' },
   },
   {
     id: 10, category: 'Watches', name: 'Squelette Doré', brand: 'AURIS MAISON',
     price: 67000, originalPrice: null,
     description: 'Open-worked skeleton dial in 18k rose gold. Hand-engraved bridges, 72h power reserve.',
-    badge: 'Exclusive', emoji: '🕰️', accent: '#d4a84c',
+    badge: 'Exclusive', image: 'https://images.unsplash.com/photo-1526045612212-70caf35c14df?w=600&q=80&fit=crop&auto=format', accent: '#d4a84c',
     details: { movement: 'Manual-winding skeleton, hand-engraved', case: '18k rose gold, 43mm, 30m WR', dial: 'Open-worked, rhodium-plated bridges', finishing: 'Côtes de Genève, bevelled edges', strap: 'Dark brown alligator, rose gold clasp', powerReserve: '72 hours', origin: 'Swiss Made · Le Brassus', reference: 'AM-SQD-001' },
   },
   {
     id: 11, category: 'Watches', name: 'Diver Noir 500', brand: 'AURIS MAISON',
     price: 12800, originalPrice: 14500,
     description: '500m water-resistant, ceramic bezel, Super-LumiNova indices. ISO 6425 certified.',
-    badge: 'Special Price', emoji: '⌚', accent: '#3a5a7c',
+    badge: 'Special Price', image: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&q=80&fit=crop&auto=format', accent: '#3a5a7c',
     details: { movement: 'Cal. AM-200A, automatic, 42h reserve', case: 'Grade 5 titanium, 44mm, 500m WR', bezel: 'Unidirectional, black ceramic insert', dial: 'Matte black, Super-LumiNova C3 indices', crystal: 'Domed sapphire, anti-reflective', bracelet: 'Titanium with wetsuit extension', certification: 'ISO 6425', origin: 'Swiss Made · Geneva', reference: 'AM-DN5-044' },
   },
   {
     id: 12, category: 'Watches', name: 'Grand Feu Émail', brand: 'AURIS MAISON',
     price: 54000, originalPrice: null,
     description: 'Hand-painted grand feu enamel dial depicting the Paris skyline. Unique piece.',
-    badge: 'One of a Kind', emoji: '🕰️', accent: '#c8b8a2',
+    badge: 'One of a Kind', image: 'https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=600&q=80&fit=crop&auto=format', accent: '#c8b8a2',
     details: { movement: 'Cal. AM-100M, manual-winding', case: '18k yellow gold, 40mm, 30m WR', dial: 'Grand feu enamel, hand-painted Paris skyline', artist: 'Maison Duval, Vallée de Joux', crystal: 'Flat sapphire, single AR coating', strap: 'Black alligator, 18k yellow gold buckle', edition: 'Unique piece, certificate included', origin: 'Swiss Made · Le Brassus', reference: 'AM-GFE-UNIQUE' },
   },
   {
     id: 13, category: 'Jewelry', name: 'Étoile Sapphire Necklace', brand: 'LUMIÈRE PARIS',
     price: 22500, originalPrice: null,
     description: 'Ceylon sapphire 8ct centre stone, pavé diamond surround. 18k white gold chain.',
-    badge: 'New Arrival', emoji: '💙', accent: '#4a6fa5',
+    badge: 'New Arrival', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80&fit=crop&auto=format', accent: '#4a6fa5',
     details: { metal: '18k white gold', centreStone: 'Ceylon sapphire 8.04ct, no heat, AGL certified', surroundStones: 'Pavé diamonds 1.2ct, VVS1 E', chain: '18k white gold, 45cm', clasp: 'Lobster claw with safety', totalWeight: '12.3g', origin: 'Paris, France', reference: 'LP-ESN-001' },
   },
   {
     id: 14, category: 'Jewelry', name: 'Panthère Cuff', brand: 'LUMIÈRE PARIS',
     price: 18900, originalPrice: 21000,
     description: 'Articulated 18k yellow gold cuff with onyx spots and emerald eyes. Art Deco.',
-    badge: 'Bestseller', emoji: '✨', accent: '#c8a832',
+    badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1573408301185-9519f94815b0?w=600&q=80&fit=crop&auto=format', accent: '#c8a832',
     details: { metal: '18k yellow gold', stones: 'Black onyx, Colombian emeralds (eyes)', construction: 'Articulated links, hand-assembled', width: '28mm at centre tapering to 14mm', clasp: 'Hidden hinge with double safety', weight: '64g', origin: 'Paris, France', reference: 'LP-PC-189' },
   },
   {
     id: 15, category: 'Jewelry', name: 'Pearl Rivière', brand: 'LUMIÈRE PARIS',
     price: 9400, originalPrice: null,
     description: 'Perfectly matched South Sea pearls, 12–14mm diameter. Diamond-set 18k clasp.',
-    badge: null, emoji: '🪬', accent: '#f0ece4',
+    badge: null, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80&fit=crop&auto=format', accent: '#f0ece4',
     details: { pearls: 'South Sea, 12–14mm, matched for colour and lustre', count: '17 pearls', clasp: '18k white gold, 0.3ct pavé diamonds', length: '45cm', grading: 'AAA quality, natural colour', thread: 'Hand-knotted silk between each pearl', origin: 'Australia · Paris', reference: 'LP-PR-094' },
   },
   {
     id: 16, category: 'Handbags', name: 'Croco Minaudière', brand: 'MAISON VANEL',
     price: 8200, originalPrice: null,
     description: 'Genuine niloticus crocodile, gold-plated brass frame. Evening clutch, limited run.',
-    badge: 'Limited Edition', emoji: '👛', accent: '#7a6a40',
+    badge: 'Limited Edition', image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80&fit=crop&auto=format', accent: '#7a6a40',
     details: { material: 'Nile crocodile (CITES certified)', hardware: '18k gold-plated brass frame', lining: 'Ivory silk', dimensions: '22 × 12 × 4 cm', closure: 'Push-lock clasp', strap: 'Removable gold chain, 80cm', edition: '12 pieces worldwide', origin: 'Paris, France', reference: 'MV-CM-012' },
   },
   {
     id: 17, category: 'Handbags', name: 'Toile Monogram Tote', brand: 'MAISON VANEL',
     price: 3100, originalPrice: null,
     description: 'Signature woven toile canvas, calfskin trim, gold hardware. A Parisian staple.',
-    badge: null, emoji: '🛍️', accent: '#b8a87c',
+    badge: null, image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&q=80&fit=crop&auto=format', accent: '#b8a87c',
     details: { material: 'Woven toile canvas, calfskin leather trim', hardware: 'Gold-tone brass', lining: 'Cotton canvas with zipper pocket', dimensions: '38 × 30 × 14 cm', straps: 'Double leather handles, 24cm drop', closure: 'Open top with magnetic snap', origin: 'Paris, France', reference: 'MV-TMT-038' },
   },
   {
     id: 18, category: 'Handbags', name: 'Python Kelly', brand: 'MAISON VANEL',
     price: 14600, originalPrice: null,
     description: 'Diamond python skin, palladium hardware, hand-stitched turnlock. Made to order.',
-    badge: 'Bespoke', emoji: '👜', accent: '#6b8a6b',
+    badge: 'Bespoke', image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=600&q=80&fit=crop&auto=format', accent: '#6b8a6b',
     details: { material: 'Diamond python (CITES certified)', hardware: 'Palladium-plated brass', stitching: 'Saddle-stitched by hand, linen thread', dimensions: '35 × 25 × 10 cm', lock: 'Turnlock with key and padlock', lining: 'Chevre goatskin', leadTime: '10–14 weeks', origin: 'Paris, France', reference: 'MV-PK-BESPOKE' },
   },
   {
     id: 19, category: 'Perfume', name: 'Iris Gris Absolu', brand: 'NÉRON PARIS',
     price: 1200, originalPrice: null,
     description: 'Orris butter from Tuscany, vetiver, grey musk. A powdery architectural fragrance.',
-    badge: 'New Arrival', emoji: '🌸', accent: '#b0a0c8',
+    badge: 'New Arrival', image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80&fit=crop&auto=format', accent: '#b0a0c8',
     details: { concentration: 'Extrait de Parfum (35% aromatic compounds)', topNotes: 'Bergamot, green aldehydes', heartNotes: 'Tuscan orris butter, violet leaf', baseNotes: 'Haitian vetiver, grey musk, ambrette', volume: '50ml', longevity: '16–24 hours', origin: 'Grasse, France', reference: 'NP-IGA-050' },
   },
   {
     id: 20, category: 'Perfume', name: 'Cuir de Russie', brand: 'NÉRON PARIS',
     price: 780, originalPrice: null,
     description: 'Birch tar, leather accord, aldehydes. A cold-weather icon revived for the modern age.',
-    badge: null, emoji: '🍂', accent: '#8b5e3c',
+    badge: null, image: 'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600&q=80&fit=crop&auto=format', accent: '#8b5e3c',
     details: { concentration: 'Eau de Parfum (22%)', topNotes: 'Bergamot, aldehydes, neroli', heartNotes: 'Leather accord, birch tar, iris', baseNotes: 'Ambergris, vetiver, castoreum', volume: '100ml', longevity: '10–14 hours', origin: 'Grasse, France', reference: 'NP-CDR-100' },
   },
   {
     id: 21, category: 'Perfume', name: 'Ambre Nomade', brand: 'NÉRON PARIS',
     price: 920, originalPrice: 1050,
     description: 'Laotian benzoin, labdanum absolute, saffron. A warm desert accord.',
-    badge: 'Special Price', emoji: '✦', accent: '#c8882c',
+    badge: 'Special Price', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80&fit=crop&auto=format', accent: '#c8882c',
     details: { concentration: 'Eau de Parfum (25%)', topNotes: 'Saffron, cardamom, pink pepper', heartNotes: 'Labdanum, rose otto, patchouli', baseNotes: 'Laotian benzoin, amber, vanilla absolute', volume: '100ml', longevity: '12–16 hours', origin: 'Grasse, France', reference: 'NP-AN-100' },
   },
   {
     id: 22, category: 'Shoes', name: 'Opera Pump', brand: 'CALLISTO BESPOKE',
     price: 2400, originalPrice: null,
     description: 'Patent calfskin opera pump, 90mm stiletto heel, hand-lasted on your personal form.',
-    badge: 'Bespoke', emoji: '👠', accent: '#c03050',
+    badge: 'Bespoke', image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80&fit=crop&auto=format', accent: '#c03050',
     details: { material: 'Patent calfskin leather', heel: '90mm stiletto, lacquered wood', sole: 'Leather outsole, rubber heel tip', construction: 'Blake-stitched, hand-lasted', lining: 'Full leather lining, padded insole', last: 'Personal last created at first fitting', leadTime: '8–12 weeks', origin: 'Florence, Italy', reference: 'CB-OP-BESPOKE' },
   },
   {
     id: 23, category: 'Shoes', name: 'Monk Strap Cognac', brand: 'CALLISTO BESPOKE',
     price: 2100, originalPrice: null,
     description: 'Double monk strap in cognac museum calf. Blake-stitched, cedar shoe trees included.',
-    badge: null, emoji: '👟', accent: '#9b6b3c',
+    badge: null, image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=600&q=80&fit=crop&auto=format', accent: '#9b6b3c',
     details: { material: 'Museum calf leather, cognac colour', sole: 'Single leather sole, rubber insert', construction: 'Blake-stitched', last: 'Elegant Oxford, narrow width', buckles: 'Double monk strap, brass hardware', extras: 'Cedar shoe trees included', lining: 'Full leather lining', origin: 'Florence, Italy', reference: 'CB-MSC-210' },
   },
   {
     id: 24, category: 'Shoes', name: 'Velvet Loafer', brand: 'CALLISTO BESPOKE',
     price: 1750, originalPrice: 2000,
     description: 'Silk velvet upper, leather sole, gold horse-bit. Perfect for black tie evenings.',
-    badge: 'Special Price', emoji: '🥿', accent: '#4a3070',
+    badge: 'Special Price', image: 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=600&q=80&fit=crop&auto=format', accent: '#4a3070',
     details: { material: 'Silk velvet upper, midnight navy', sole: 'Single leather sole, hand-stitched', hardware: '18k gold-plated brass horse-bit', construction: 'Cemented', lining: 'Leather and suede lining', heel: '18mm', origin: 'Florence, Italy', reference: 'CB-VL-175' },
   },
   {
     id: 25, category: 'Accessories', name: 'Alligator Belt', brand: 'MAISON VANEL',
     price: 1480, originalPrice: null,
     description: 'Full-grain alligator leather, 18k gold buckle. Sizes 70–110cm, made to order.',
-    badge: null, emoji: '🪢', accent: '#5a4a2c',
+    badge: null, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80&fit=crop&auto=format', accent: '#5a4a2c',
     details: { material: 'Mississippi alligator (CITES certified)', buckle: '18k gold-plated solid brass', width: '30mm', thickness: '3.5mm', sizes: '70–110cm, half-size increments', finish: 'Matte, natural scale pattern', lining: 'Calfskin leather', origin: 'Paris, France', reference: 'MV-AB-BESPOKE' },
   },
   {
     id: 26, category: 'Accessories', name: 'Cashmere Travel Wrap', brand: 'MAISON VANEL',
     price: 890, originalPrice: null,
     description: 'Grade A Mongolian cashmere, 200×90cm. Reversible ivory and midnight blue.',
-    badge: 'Artisan Craft', emoji: '🧥', accent: '#a8b8c8',
+    badge: 'Artisan Craft', image: 'https://images.unsplash.com/photo-1604644401890-0bd678c83788?w=600&q=80&fit=crop&auto=format', accent: '#a8b8c8',
     details: { material: 'Grade A Mongolian cashmere, 2-ply', dimensions: '200 × 90 cm', weight: '280g', colours: 'Reversible: ivory and midnight blue', finish: 'Brushed, hand-hemmed edges', care: 'Hand wash cold or dry clean', origin: 'Mongolia · Lyon', reference: 'MV-CTW-200' },
   },
   {
     id: 27, category: 'Accessories', name: 'Cufflinks Émail Bleu', brand: 'LUMIÈRE PARIS',
     price: 2200, originalPrice: null,
     description: 'Grand feu enamel in cobalt blue, 18k white gold setting, toggleback closure.',
-    badge: null, emoji: '🔵', accent: '#1a4a8a',
+    badge: null, image: 'https://images.unsplash.com/photo-1608042314453-ae338d682c93?w=600&q=80&fit=crop&auto=format', accent: '#1a4a8a',
     details: { metal: '18k white gold', enamel: 'Grand feu enamel, cobalt blue, hand-fired', face: '16mm round', closure: 'Whalebone toggleback', finishing: 'High polish setting, brushed back', weight: '8g per pair', origin: 'Paris, France', reference: 'LP-CEB-001' },
   },
   {
     id: 28, category: 'Accessories', name: 'Leather Portfolio', brand: 'MAISON VANEL',
     price: 1950, originalPrice: null,
     description: 'Full-grain black calfskin, 24 card slots, document sleeve. Engraving included.',
-    badge: 'New Arrival', emoji: '🗂️', accent: '#2a2a2a',
+    badge: 'New Arrival', image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80&fit=crop&auto=format', accent: '#2a2a2a',
     details: { material: 'Full-grain French calfskin, black', slots: '24 card slots, 6 hidden pockets', sleeve: 'Document sleeve, A4/letter format', dimensions: '22 × 12 × 2 cm', closure: 'Press-stud button', engraving: 'Complimentary initials (up to 3 characters)', origin: 'Paris, France', reference: 'MV-LP-001' },
   },
   {
     id: 29, category: 'Watches', name: 'Régulateur Acier', brand: 'AURIS MAISON',
     price: 19500, originalPrice: null,
     description: 'Regulator display with separate seconds, minutes, and hours. Brushed steel case.',
-    badge: null, emoji: '⌚', accent: '#8a9aaa',
+    badge: null, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80&fit=crop&auto=format', accent: '#8a9aaa',
     details: { movement: 'Cal. AM-300R, manual-winding regulator display', case: 'Brushed 316L steel, 40mm, 50m WR', dial: 'Silver sector dial, blued steel hands', crystal: 'Flat sapphire, single AR coating', strap: 'Steel mesh bracelet with butterfly clasp', powerReserve: '48 hours', origin: 'Swiss Made · Le Brassus', reference: 'AM-RA-195' },
   },
   {
     id: 30, category: 'Jewelry', name: 'Bague Chevalière', brand: 'LUMIÈRE PARIS',
     price: 4800, originalPrice: null,
     description: 'Signet ring in 18k yellow gold, hand-engraved heraldic motif. Personalised.',
-    badge: null, emoji: '💍', accent: '#c8a832',
+    badge: null, image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80&fit=crop&auto=format', accent: '#c8a832',
     details: { metal: '18k yellow gold', face: '18 × 15mm oval table', engraving: 'Hand-engraved heraldic motif, personalised', shank: '4mm, comfort-fit', weight: '22g (size 58)', sizing: 'Available 50–68, half sizes', leadTime: '4–6 weeks for engraving', origin: 'Paris, France', reference: 'LP-BCH-BESPOKE' },
   },
   {
     id: 31, category: 'Handbags', name: 'Sac Pochette Soirée', brand: 'MAISON VANEL',
     price: 2650, originalPrice: null,
     description: 'Ivory satin with hand-beaded floral motif. Gold chain strap, silk-lined interior.',
-    badge: 'New Arrival', emoji: '👛', accent: '#e8dcc8',
+    badge: 'New Arrival', image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=600&q=80&fit=crop&auto=format', accent: '#e8dcc8',
     details: { material: 'Duchesse satin, ivory', embellishment: 'Hand-beaded floral motif, glass seed beads', hardware: '18k gold-plated chain, 80cm', lining: 'Ivory silk charmeuse', dimensions: '24 × 14 × 4 cm', closure: 'Magnetic clasp', care: 'Professional cleaning only', origin: 'Paris, France', reference: 'MV-SPS-001' },
   },
   {
     id: 32, category: 'Perfume', name: 'Vétiver Encens', brand: 'NÉRON PARIS',
     price: 840, originalPrice: null,
     description: 'Haitian vetiver, church incense, smoked cedar. A meditative, unisex composition.',
-    badge: null, emoji: '🕯️', accent: '#6a7a5a',
+    badge: null, image: 'https://images.unsplash.com/photo-1541643600914-78b084683702?w=600&q=80&fit=crop&auto=format', accent: '#6a7a5a',
     details: { concentration: 'Eau de Parfum (22%)', topNotes: 'Green vetiver, black pepper', heartNotes: 'Church incense, olibanum', baseNotes: 'Smoked cedar, patchouli, oakmoss', volume: '100ml', longevity: '10–14 hours', origin: 'Grasse, France', reference: 'NP-VE-100' },
   },
   {
     id: 33, category: 'Shoes', name: 'Chelsea Boot Suède', brand: 'CALLISTO BESPOKE',
     price: 2250, originalPrice: null,
     description: 'Midnight suede Chelsea boot, elastic gore, leather insole. Hand-welted in Florence.',
-    badge: 'Bestseller', emoji: '🥾', accent: '#2c2c4a',
+    badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?w=600&q=80&fit=crop&auto=format', accent: '#2c2c4a',
     details: { material: 'Water-resistant midnight suede', gore: 'Elastic side panels, hand-stitched', sole: 'Dainite rubber sole', construction: 'Hand-welted', heel: '32mm stacked leather', lining: 'Full leather lining', insole: 'Cushioned leather insole', origin: 'Florence, Italy', reference: 'CB-CBS-225' },
   },
   {
     id: 34, category: 'Accessories', name: 'Montre Gousset', brand: 'AURIS MAISON',
     price: 7400, originalPrice: null,
     description: 'Pocket watch in sterling silver, hunter case, Roman numerals. A timeless heirloom.',
-    badge: null, emoji: '🕰️', accent: '#c0c0c0',
+    badge: null, image: 'https://images.unsplash.com/photo-1509941943102-10c232535736?w=600&q=80&fit=crop&auto=format', accent: '#c0c0c0',
     details: { movement: 'Manual-winding, 17 jewels, adjusted 5 positions', case: 'Sterling silver, 52mm hunter case', dial: 'White enamel, Roman numerals, blued hands', crystal: 'Mineral glass, anti-reflective', chain: 'Sterling silver Albert chain, 30cm', powerReserve: '36 hours', origin: 'Swiss Made · La Chaux-de-Fonds', reference: 'AM-MG-001' },
   },
   {
     id: 35, category: 'Jewelry', name: 'Collier Rivière Diamants', brand: 'LUMIÈRE PARIS',
     price: 31000, originalPrice: null,
     description: '47 round brilliant diamonds totalling 8.4ct. 18k white gold rivière, 42cm.',
-    badge: 'Haute Joaillerie', emoji: '💎', accent: '#e8f0f8',
+    badge: 'Haute Joaillerie', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80&fit=crop&auto=format', accent: '#e8f0f8',
     details: { metal: '18k white gold', stones: '47 round brilliant diamonds, 8.4ct total, D–E VVS1', setting: 'Shared-prong rivière, hand-set', length: '42cm with additional extension', clasp: '18k white gold box clasp with safety', totalWeight: '18.2g', certification: 'GIA individual certificates for 5 anchor stones', origin: 'Paris, France', reference: 'LP-CRD-840' },
   },
   {
     id: 36, category: 'Handbags', name: 'Besace Cuir Végétal', brand: 'MAISON VANEL',
     price: 3800, originalPrice: null,
     description: 'Vegetable-tanned French calf, brass hardware. Ages beautifully with daily use.',
-    badge: null, emoji: '🎒', accent: '#b89060',
+    badge: null, image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&q=80&fit=crop&auto=format', accent: '#b89060',
     details: { material: 'Vegetable-tanned Chamonix calf, natural', hardware: 'Solid brass, unlacquered', dimensions: '36 × 26 × 10 cm', strap: 'Adjustable leather strap, 80–130cm', closure: 'Brass buckle with leather loop', lining: 'Cotton canvas', aging: 'Develops rich patina over years of use', origin: 'Paris, France', reference: 'MV-BCV-038' },
   },
   {
     id: 37, category: 'Perfume', name: 'Rose Absolue de Mai', brand: 'NÉRON PARIS',
     price: 1650, originalPrice: null,
     description: 'Rosa centifolia absolute from Grasse, 50ml. One of the rarest perfume ingredients.',
-    badge: 'Rare Edition', emoji: '🌹', accent: '#e05870',
+    badge: 'Rare Edition', image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=600&q=80&fit=crop&auto=format', accent: '#e05870',
     details: { concentration: 'Extrait de Parfum (40% aromatic compounds)', mainIngredient: 'Rosa centifolia absolute, Grasse — 2 tons of petals per kg', topNotes: 'Aldehydes, lychee, citrus', heartNotes: 'Rose centifolia absolute, geranium', baseNotes: 'Musk, vetiver, benzoin', volume: '50ml', batch: 'Annual limited release, ~120 flacons', origin: 'Grasse, France', reference: 'NP-RADM-050' },
   },
   {
     id: 38, category: 'Accessories', name: 'Chapeau Fedora Feutre', brand: 'MAISON VANEL',
     price: 560, originalPrice: null,
     description: 'Hand-blocked rabbit felt fedora, grosgrain ribbon, satin lining. Sizes 54–60.',
-    badge: null, emoji: '🎩', accent: '#3a3020',
+    badge: null, image: 'https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?w=600&q=80&fit=crop&auto=format', accent: '#3a3020',
     details: { material: 'Rabbit felt, charcoal brown', brim: '7cm, curved', ribbon: 'Moiré grosgrain, 3cm', lining: 'Striped cotton satin', blocking: 'Hand-blocked on wooden form', sizing: 'Available 54–60 (half sizes)', care: 'Steam only, store on a hat stand', origin: 'Paris, France', reference: 'MV-CFF-001' },
   },
   {
     id: 39, category: 'Watches', name: 'Chronographe Flyback', brand: 'AURIS MAISON',
     price: 36500, originalPrice: null,
     description: 'Flyback chronograph, column wheel, vertical clutch. Salmon dial, 42mm.',
-    badge: null, emoji: '⌚', accent: '#e8a070',
+    badge: null, image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=600&q=80&fit=crop&auto=format', accent: '#e8a070',
     details: { movement: 'Cal. AM-CF42, flyback chronograph, column wheel', case: '18k rose gold, 42mm, 30m WR', dial: 'Salmon guilloché, applied gold hour markers', chronograph: 'Flyback function, 30-min counter at 3, seconds at 9', crystal: 'Domed sapphire, double AR coating', strap: 'Tan alligator, 18k rose gold deployant', powerReserve: '60 hours', origin: 'Swiss Made · Le Brassus', reference: 'AM-CF-365' },
   },
 ];
@@ -368,12 +368,118 @@ const scrollTo = (id) =>
 
 const fmtKey = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
 
+const MOCK_ORDERS = [
+  { id: 'AUR-2026-0041', date: '28 Apr 2026', status: 'Delivered', items: [{ name: 'Lumière Noir Intense', qty: 1, price: '€ 1 290' }], total: '€ 1 290' },
+  { id: 'AUR-2026-0029', date: '11 Mar 2026', status: 'Delivered', items: [{ name: 'Callisto Skeleton', qty: 1, price: '€ 8 400' }, { name: 'Néron Oud Impérial', qty: 2, price: '€ 980' }], total: '€ 10 360' },
+  { id: 'AUR-2025-0118', date: '02 Dec 2025', status: 'Delivered', items: [{ name: 'Auris 39mm Moonphase', qty: 1, price: '€ 12 800' }], total: '€ 12 800' },
+];
+
+function LoggedInView({ email, name, onSignOut }) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [expandedOrder, setExpandedOrder] = useState(null);
+  const displayName = name || email.split('@')[0];
+
+  return (
+    <div className="profile-body">
+      <div className="acct-hero">
+        <div className="acct-avatar">✦</div>
+        <div className="acct-name">{displayName}</div>
+        <div className="acct-email">{email}</div>
+        <div className="acct-badge">Maison Member</div>
+      </div>
+
+      <div className="acct-tabs">
+        {[['overview', 'Overview'], ['orders', 'Orders'], ['settings', 'Settings']].map(([key, label]) => (
+          <button key={key} className={`acct-tab ${activeTab === key ? 'active' : ''}`} onClick={() => setActiveTab(key)}>{label}</button>
+        ))}
+      </div>
+
+      {activeTab === 'overview' && (
+        <div className="acct-section">
+          <div className="acct-stats">
+            <div className="acct-stat"><div className="acct-stat-n">{MOCK_ORDERS.length}</div><div className="acct-stat-l">Orders</div></div>
+            <div className="acct-stat"><div className="acct-stat-n">€ 24 450</div><div className="acct-stat-l">Total Spent</div></div>
+            <div className="acct-stat"><div className="acct-stat-n">Gold</div><div className="acct-stat-l">Tier</div></div>
+          </div>
+          <div className="acct-label">Recent Order</div>
+          <div className="acct-order-card">
+            <div className="acct-order-top">
+              <span className="acct-order-id">{MOCK_ORDERS[0].id}</span>
+              <span className="acct-order-status delivered">{MOCK_ORDERS[0].status}</span>
+            </div>
+            <div className="acct-order-date">{MOCK_ORDERS[0].date}</div>
+            <div className="acct-order-total">{MOCK_ORDERS[0].total}</div>
+          </div>
+          <div className="acct-menu">
+            {[['📦', 'Bespoke Commissions'], ['❤️', 'Wishlist'], ['📍', 'Address Book']].map(([icon, label]) => (
+              <button key={label} className="acct-menu-item"><span className="acct-menu-icon">{icon}</span>{label}<span className="acct-menu-arrow">→</span></button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'orders' && (
+        <div className="acct-section">
+          <div className="acct-label">Order History</div>
+          {MOCK_ORDERS.map((order) => (
+            <div key={order.id} className="acct-order-card">
+              <button className="acct-order-toggle" onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}>
+                <div className="acct-order-top">
+                  <span className="acct-order-id">{order.id}</span>
+                  <span className="acct-order-status delivered">{order.status}</span>
+                </div>
+                <div className="acct-order-meta">
+                  <span className="acct-order-date">{order.date}</span>
+                  <span className="acct-order-total">{order.total}</span>
+                  <span className="acct-order-chevron">{expandedOrder === order.id ? '▲' : '▼'}</span>
+                </div>
+              </button>
+              {expandedOrder === order.id && (
+                <div className="acct-order-items">
+                  {order.items.map((item) => (
+                    <div key={item.name} className="acct-order-item">
+                      <span className="acct-order-item-name">{item.name}</span>
+                      <span className="acct-order-item-qty">×{item.qty}</span>
+                      <span className="acct-order-item-price">{item.price}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div className="acct-section">
+          <div className="acct-label">Account Details</div>
+          <div className="acct-info-row"><span>Name</span><span>{displayName}</span></div>
+          <div className="acct-info-row"><span>Email</span><span>{email}</span></div>
+          <div className="acct-info-row"><span>Member Since</span><span>2025</span></div>
+          <div className="acct-info-row"><span>Tier</span><span>Gold</span></div>
+          <div className="acct-label" style={{ marginTop: '1.5rem' }}>Preferences</div>
+          {[['Newsletter', 'Monthly curation digest'], ['Notifications', 'Order updates & drops'], ['Currency', 'EUR €']].map(([label, sub]) => (
+            <div key={label} className="acct-pref-row">
+              <div><div className="acct-pref-label">{label}</div><div className="acct-pref-sub">{sub}</div></div>
+              <span className="acct-menu-arrow">→</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <button className="acct-signout" onClick={onSignOut}>Sign Out</button>
+    </div>
+  );
+}
+
 // ── PROFILE DRAWER
 function ProfileDrawer({ onClose }) {
   const [tab, setTab] = useState('login');
   const [form, setForm] = useState({ email: '', password: '', name: '' });
   const [errors, setErrors] = useState({});
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(() => {
+    try { return !!sessionStorage.getItem('auris_user'); } catch { return false; }
+  });
 
   const validateLogin = () => {
     const e = {};
@@ -392,6 +498,8 @@ function ProfileDrawer({ onClose }) {
   const handleSubmit = () => {
     const e = tab === 'login' ? validateLogin() : validateRegister();
     if (Object.keys(e).length) { setErrors(e); return; }
+    const user = { email: form.email, name: form.name || form.email.split('@')[0] };
+    sessionStorage.setItem('auris_user', JSON.stringify(user));
     setLoggedIn(true);
   };
 
@@ -417,25 +525,11 @@ function ProfileDrawer({ onClose }) {
         </div>
 
         {loggedIn ? (
-          <div className="profile-body">
-            <div className="profile-logged-in">
-              <div className="profile-avatar-large">✦</div>
-              <div className="profile-email">{form.email}</div>
-              <div className="profile-member-badge">Member · Maison Auris</div>
-            </div>
-            <div className="profile-menu">
-              {['My Orders', 'Bespoke Commissions', 'Wishlist', 'Address Book', 'Preferences'].map((item) => (
-                <button key={item} className="profile-menu-item">{item} <span>→</span></button>
-              ))}
-            </div>
-            <button
-              className="continue-btn"
-              style={{ marginTop: '1rem' }}
-              onClick={() => { setLoggedIn(false); setForm({ email: '', password: '', name: '' }); }}
-            >
-              Sign Out
-            </button>
-          </div>
+          <LoggedInView
+            email={form.email}
+            name={form.name}
+            onSignOut={() => { sessionStorage.removeItem('auris_user'); setLoggedIn(false); setForm({ email: '', password: '', name: '' }); }}
+          />
         ) : (
           <div className="profile-body">
             <div className="profile-welcome">
@@ -523,12 +617,12 @@ function SearchOverlay({ onClose, onAddToCart }) {
           <div className="search-results">
             {results.map((p) => (
               <div key={p.id} className="search-result-item">
-                <span className="search-result-emoji">{p.emoji}</span>
+                <img className="search-result-img" src={p.image} alt={p.name} />
                 <div className="search-result-info">
                   <div
                     className="search-result-name"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => { onClose(); navigate(`/product/${p.id}`); }}
+                    onClick={() => { onClose(); sessionStorage.setItem('homeScrollY', String(window.scrollY)); navigate(`/product/${p.id}`); }}
                   >
                     {p.name}
                   </div>
@@ -562,7 +656,7 @@ function SearchOverlay({ onClose, onAddToCart }) {
 function CartItem({ item, onRemove, onQty }) {
   return (
     <div className="cart-item">
-      <span className="cart-item-emoji">{item.emoji}</span>
+      <img className="cart-item-img" src={item.image} alt={item.name} />
       <div className="cart-item-info">
         <div className="cart-item-name">{item.name}</div>
         <div className="cart-item-brand">{item.brand}</div>
@@ -657,12 +751,20 @@ function ProductCard({ product, onAdd, onView }) {
       className={`product-card ${hovering ? 'hovered' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setHovering(false)}
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => {
+        sessionStorage.setItem('homeScrollY', String(window.scrollY));
+        navigate(`/product/${product.id}`);
+      }}
       style={{ '--accent': product.accent, cursor: 'pointer' }}
     >
-      {product.badge && <div className="product-badge">{product.badge}</div>}
       <div className="product-emoji-wrap">
-        <div className="product-emoji">{product.emoji}</div>
+        {product.badge && <div className="product-badge">{product.badge}</div>}
+        <img
+          className="product-img"
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+        />
         <div
           className="product-glow"
           style={{ background: `radial-gradient(circle, ${product.accent}30, transparent 70%)` }}
@@ -708,12 +810,13 @@ function ProductDetail({ product, onAdd }) {
             className="detail-visual-bg"
             style={{ background: `radial-gradient(circle at 50% 50%, ${product.accent}55, transparent 65%)` }}
           />
-          <div className="detail-emoji">{product.emoji}</div>
+          <img className="detail-img" src={product.image} alt={product.name} />
           {product.badge && <div className="detail-badge">{product.badge}</div>}
         </div>
 
         {/* RIGHT — scrollable info */}
         <div className="detail-info-panel">
+          <div className="detail-info-inner">
           <button className="detail-back" onClick={() => navigate(-1)}>
             ← Back to Collection
           </button>
@@ -749,6 +852,7 @@ function ProductDetail({ product, onAdd }) {
               ))}
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
@@ -837,7 +941,7 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
               <div className="summary-label">Your Selection</div>
               {cart.map((item) => (
                 <div key={item.id} className="summary-product-row">
-                  <span>{item.emoji} {item.name} {item.qty > 1 && `×${item.qty}`}</span>
+                  <span>{item.name} {item.qty > 1 && `×${item.qty}`}</span>
                   <span>{fmt(item.price * item.qty)}</span>
                 </div>
               ))}
@@ -912,7 +1016,7 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
             <div className="success-items">
               {cart.map((item) => (
                 <div key={item.id} className="success-item">
-                  {item.emoji} {item.name}
+                  {item.name}
                   {item.qty > 1 && <span className="success-qty">×{item.qty}</span>}
                 </div>
               ))}
@@ -944,6 +1048,27 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
   const recsAbortRef = useRef(null);
 
   useEffect(() => { setTimeout(() => setHeroVisible(true), 100); }, []);
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem('pendingScrollTo');
+    if (pending) {
+      sessionStorage.removeItem('pendingScrollTo');
+      sessionStorage.removeItem('homeScrollY');
+      requestAnimationFrame(() => {
+        document.getElementById(pending)?.scrollIntoView({ behavior: 'smooth' });
+      });
+      return;
+    }
+    const y = sessionStorage.getItem('homeScrollY');
+    if (y !== null) {
+      sessionStorage.removeItem('homeScrollY');
+      const target = parseInt(y, 10);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: target, left: 0, behavior: 'auto' });
+        requestAnimationFrame(() => window.scrollTo({ top: target, left: 0, behavior: 'auto' }));
+      });
+    }
+  }, []);
 
   const refreshRecommendations = useCallback(() => {
     clearTimeout(recsTimerRef.current);
@@ -996,21 +1121,15 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
             <button className="hero-cta secondary" onClick={openMailson}>Our Maisons</button>
           </div>
         </div>
-        <div className="hero-scroll-hint" onClick={() => scrollTo('catalog')}>
-          <div className="scroll-line" />
-          <span>Scroll</span>
-        </div>
-      </div>
-
-      {/* ── MARQUEE */}
-      <div className="marquee-wrap">
-        <div className="marquee">
-          {['White Glove Delivery', 'Certified Authenticity', 'Swiss Craftsmanship', 'Parisian Ateliers', '30-Day Returns', 'Private Concierge', 'Complimentary Engraving'].map((t, i) => (
-            <span key={i}>✦ {t} </span>
-          ))}
-          {['White Glove Delivery', 'Certified Authenticity', 'Swiss Craftsmanship', 'Parisian Ateliers', '30-Day Returns', 'Private Concierge', 'Complimentary Engraving'].map((t, i) => (
-            <span key={`b${i}`}>✦ {t} </span>
-          ))}
+        <div className="hero-marquee-wrap">
+          <div className="marquee">
+            {['White Glove Delivery', 'Certified Authenticity', 'Swiss Craftsmanship', 'Parisian Ateliers', '30-Day Returns', 'Private Concierge', 'Complimentary Engraving'].map((t, i) => (
+              <span key={i}>✦ {t} </span>
+            ))}
+            {['White Glove Delivery', 'Certified Authenticity', 'Swiss Craftsmanship', 'Parisian Ateliers', '30-Day Returns', 'Private Concierge', 'Complimentary Engraving'].map((t, i) => (
+              <span key={`b${i}`}>✦ {t} </span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -1039,6 +1158,7 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
 
       {/* ── CATALOG */}
       <section id="catalog" className="catalog">
+        <div className="catalog-inner">
         <div className="catalog-header">
           <h2 className="catalog-title">The Collection</h2>
           <p className="catalog-subtitle">Objects of singular craftsmanship, selected from the world's finest maisons.</p>
@@ -1086,6 +1206,55 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
             <button className="cat-btn active" onClick={() => { setSearchQuery(''); setActiveCategory('All'); }}>Show All Pieces</button>
           </div>
         )}
+        </div>
+      </section>
+
+      {/* ── ABOUT US */}
+      <section id="about" className="about-section">
+        <div className="about-inner">
+          <div className="about-header">
+            <div className="about-overline">Notre Histoire</div>
+            <h2 className="about-title">The House of Auris</h2>
+            <p className="about-lead">
+              Born in Paris. Raised in the ateliers of Geneva, Florence and Grasse.
+              Auris Maison is not a retailer — it is a curator of the exceptional.
+            </p>
+          </div>
+
+          <div className="about-milestones">
+            {[
+              { year: '2019', title: 'Founded in Paris', desc: 'Three collectors, one obsession: sourcing objects of singular craft from the world\'s finest maisons.' },
+              { year: '2020', title: 'First Maison Partnership', desc: 'AURIS MAISON and LUMIÈRE PARIS join forces. The first 12 pieces sell out in 48 hours.' },
+              { year: '2021', title: 'Geneva & Florence', desc: 'Callisto Bespoke and Auris watchmaking atelier open dedicated boutique partnerships. Bespoke programme launches.' },
+              { year: '2022', title: '10 000 Clients', desc: 'A global community of discerning collectors across 47 countries. White-glove delivery expands worldwide.' },
+              { year: '2023', title: 'Grasse & Haute Parfumerie', desc: 'NÉRON PARIS joins the maison family. Rare edition fragrances debut, selling out within days of release.' },
+              { year: '2026', title: 'The Collection Today', desc: 'Over 39 curated pieces. Five maisons. One promise: only the exceptional, always.' },
+            ].map((m, i) => (
+              <div key={i} className="milestone">
+                <div className="milestone-year">{m.year}</div>
+                <div className="milestone-line"><div className="milestone-dot" /></div>
+                <div className="milestone-content">
+                  <div className="milestone-title">{m.title}</div>
+                  <div className="milestone-desc">{m.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="about-stats">
+            {[
+              { n: '39', label: 'Curated Pieces' },
+              { n: '5', label: 'Partner Maisons' },
+              { n: '47', label: 'Countries Served' },
+              { n: '10k+', label: 'Private Clients' },
+            ].map((s) => (
+              <div key={s.label} className="about-stat">
+                <div className="about-stat-n">{s.n}</div>
+                <div className="about-stat-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── FEATURES STRIP */}
@@ -1127,6 +1296,19 @@ function ShopPage({ onAdd, openMailson, openBespoke, openAtelier, openContact, s
 
 // ── MAIN APP
 export default function App() {
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const goCollection = useCallback(() => {
+    if (location.pathname !== '/') {
+      sessionStorage.setItem('pendingScrollTo', 'catalog');
+      navigate('/');
+    } else {
+      document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location.pathname, navigate]);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -1134,6 +1316,28 @@ export default function App() {
   const [infoModal, setInfoModal] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navMode, setNavMode] = useState('dark');
+
+  useEffect(() => {
+    const catalog = document.getElementById('catalog');
+    const about = document.getElementById('about');
+    const visible = new Set();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) visible.add(e.target.id);
+          else visible.delete(e.target.id);
+        });
+        if (visible.has('about')) setNavMode('warm');
+        else if (visible.has('catalog')) setNavMode('light');
+        else setNavMode('dark');
+      },
+      { rootMargin: '-100px 0px -55% 0px', threshold: 0 }
+    );
+    if (catalog) obs.observe(catalog);
+    if (about) obs.observe(about);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     const anyOpen = cartOpen || checkoutOpen || searchOpen || !!infoModal || profileOpen;
@@ -1258,10 +1462,10 @@ export default function App() {
     <div className="shop">
 
       {/* ── NAV */}
-      <nav className="nav">
+      <nav className={`nav${navMode === 'light' ? ' nav-light' : navMode === 'warm' ? ' nav-warm' : ''}`}>
         <button className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>AURIS</button>
         <div className="nav-links">
-          <button className="nav-link-btn" onClick={() => scrollTo('catalog')}>Collection</button>
+          <button className="nav-link-btn" onClick={goCollection}>Collection</button>
           <button className="nav-link-btn" onClick={openMailson}>Maisons</button>
           <button className="nav-link-btn" onClick={openBespoke}>Bespoke</button>
           <button className="nav-link-btn" onClick={openAtelier}>Atelier</button>
@@ -1285,15 +1489,13 @@ export default function App() {
         </button>
       </nav>
 
-      {mobileMenuOpen && (
-        <div className="mobile-menu">
-          <button onClick={() => { scrollTo('catalog'); setMobileMenuOpen(false); }}>Collection</button>
-          <button onClick={() => { openMailson(); setMobileMenuOpen(false); }}>Maisons</button>
-          <button onClick={() => { openBespoke(); setMobileMenuOpen(false); }}>Bespoke</button>
-          <button onClick={() => { openAtelier(); setMobileMenuOpen(false); }}>Atelier</button>
-          <button onClick={() => { openContact(); setMobileMenuOpen(false); }}>Concierge</button>
-        </div>
-      )}
+      <div className={`mobile-menu mobile-menu-${navMode} ${mobileMenuOpen ? 'open' : ''}`} aria-hidden={!mobileMenuOpen}>
+        <button onClick={() => { goCollection(); setMobileMenuOpen(false); }}>Collection</button>
+        <button onClick={() => { openMailson(); setMobileMenuOpen(false); }}>Maisons</button>
+        <button onClick={() => { openBespoke(); setMobileMenuOpen(false); }}>Bespoke</button>
+        <button onClick={() => { openAtelier(); setMobileMenuOpen(false); }}>Atelier</button>
+        <button onClick={() => { openContact(); setMobileMenuOpen(false); }}>Concierge</button>
+      </div>
 
       {/* ── ROUTES */}
       <Routes>
