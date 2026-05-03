@@ -10,7 +10,8 @@ if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* Der basename sorgt dafür, dass alle Routen relativ zum Repo-Namen funktionieren */}
+    <BrowserRouter basename="/codespaces-react">
       <App />
     </BrowserRouter>
   </React.StrictMode>
